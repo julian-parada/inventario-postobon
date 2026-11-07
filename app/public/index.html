@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inventario Postobón · Ocaña</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside class="lateral" id="lateral">
+    <div class="marca">
+      <div class="marca-icono" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M9 2h6v3l2 3v13a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V8l2-3z"/><path d="M7 12h10"/></svg>
+      </div>
+      <div>
+        <strong>Inventario</strong>
+        <span>Centro de distribución · Ocaña</span>
+      </div>
+    </div>
+    <nav id="menu"></nav>
+    <div class="conexion" id="conexion"><span class="punto"></span><span>Conectando…</span></div>
+  </aside>
+
+  <main class="principal">
+    <header class="barra">
+      <button class="boton-menu" id="botonMenu" aria-label="Abrir menú">☰</button>
+      <div>
+        <h1 id="tituloVista">Inicio</h1>
+        <p id="subtituloVista" class="sub"></p>
+      </div>
+      <button class="boton fantasma" id="botonBitacora" title="Ver lo que la base aceptó y rechazó">
+        Bitácora <span class="contador" id="contadorBitacora">0</span>
+      </button>
+    </header>
+    <section id="vista" class="vista"></section>
+  </main>
+
+  <!-- Formulario (crear / editar) -->
+  <dialog id="modal" class="modal">
+    <form id="formulario" method="dialog" novalidate>
+      <header>
+        <h2 id="tituloModal">Nuevo</h2>
+        <button type="button" class="cerrar" data-cerrar aria-label="Cerrar">×</button>
+      </header>
+      <div id="camposModal" class="campos"></div>
+      <p class="nota">Los datos los valida la base de datos (CHECK, UNIQUE, llaves y triggers), no la página.</p>
+      <footer>
+        <button type="button" class="boton fantasma" data-cerrar>Cancelar</button>
+        <button type="submit" class="boton primario" id="botonGuardar">Guardar</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- Confirmación -->
+  <dialog id="confirmar" class="modal pequeno">
+    <form method="dialog">
+      <header><h2 id="tituloConfirmar">¿Seguro?</h2></header>
+      <p id="textoConfirmar" class="texto-confirmar"></p>
+      <footer>
+        <button value="no" class="boton fantasma">Cancelar</button>
+        <button value="si" class="boton peligro" id="botonConfirmar">Eliminar</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <!-- Bitácora de la sesión -->
+  <aside class="bitacora" id="bitacora" aria-hidden="true">
+    <header>
+      <h2>Bitácora de la sesión</h2>
+      <button class="cerrar" id="cerrarBitacora" aria-label="Cerrar">×</button>
+    </header>
+    <p class="sub">Cada operación enviada a PostgreSQL y su respuesta.</p>
+    <ol id="listaBitacora"></ol>
+  </aside>
+
+  <div id="avisos" class="avisos" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

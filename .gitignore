@@ -1,0 +1,6 @@
+# Dependencias y secretos
+node_modules/
+.env
+*.log
+__pycache__/
+.DS_Store

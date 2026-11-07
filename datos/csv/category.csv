@@ -1,0 +1,21 @@
+category_id,category_name,description
+1,GASEOSAS DE SABORES,"Bebidas carbonatadas de sabores a frutas: Postobón, Colombiana, Bretaña, Kola Román"
+2,GASEOSAS COLA,"Bebidas carbonatadas tipo cola: Pepsi, Pepsi Black, Freskola"
+3,GASEOSAS LIMA LIMON,"Bebidas carbonatadas lima-limón: 7Up, Bretaña"
+4,GASEOSAS CERO AZUCAR,Versiones sin azúcar de la línea de gaseosas
+5,AGUA NATURAL,"Agua potable tratada sin gas: Cristal, Oasis"
+6,AGUA CON GAS,Agua potable carbonatada
+7,AGUA SABORIZADA,Agua con sabor y baja en calorías: H2Oh!
+8,JUGOS DE FRUTA,Bebidas a base de pulpa de fruta: Hit
+9,REFRESCOS DE FRUTA,"Refrescos con jugo de fruta: Tutti Frutti, Frutiño listo"
+10,TES LISTOS,"Té listo para tomar: Mr. Tea, Lipton"
+11,BEBIDAS HIDRATANTES,"Bebidas con electrolitos: Gatorade, Squash"
+12,BEBIDAS ENERGIZANTES,"Bebidas con cafeína y taurina: Speed Max, Peak"
+13,MALTAS,Bebidas de malta sin alcohol
+14,BEBIDAS FUNCIONALES,Bebidas con vitaminas o fibra adicionada
+15,ENVASE RETORNABLE VIDRIO,Producto en botella de vidrio retornable que exige devolución de envase
+16,FORMATO FAMILIAR,Presentaciones de 2 litros o más para consumo en hogar
+17,FORMATO PERSONAL,Presentaciones individuales de hasta 600 ml
+18,LATAS,Presentaciones en lata de aluminio
+19,INSTITUCIONAL,"Formatos para restaurantes, colegios y casinos"
+20,PROMOCIONES,Empaques promocionales y combos de temporada
