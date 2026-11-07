@@ -21,12 +21,17 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM employee) THEN RAISE EXCEPTION 'Primero llene EMPLOYEE'; END IF;
 END $$;
 
--- Tablas puente temporales: posición (1, 2, 3...) -> ID real
-CREATE TEMP TABLE map_category ON COMMIT DROP AS
+-- Tablas puente: posición (1, 2, 3...) -> ID real.
+-- Son tablas normales (no TEMP) para que el script funcione igual en pgAdmin
+-- y en el SQL Editor de Supabase; se borran al final del script.
+DROP TABLE IF EXISTS map_category;
+CREATE TABLE map_category AS
   SELECT row_number() OVER (ORDER BY category_id) AS pos, category_id AS id FROM category;
-CREATE TEMP TABLE map_supplier ON COMMIT DROP AS
+DROP TABLE IF EXISTS map_supplier;
+CREATE TABLE map_supplier AS
   SELECT row_number() OVER (ORDER BY supplier_id) AS pos, supplier_id AS id FROM supplier;
-CREATE TEMP TABLE map_employee ON COMMIT DROP AS
+DROP TABLE IF EXISTS map_employee;
+CREATE TABLE map_employee AS
   SELECT row_number() OVER (ORDER BY employee_id) AS pos, employee_id AS id FROM employee;
 
 -- PRODUCT (100 filas)
@@ -3674,5 +3679,10 @@ SELECT setval(pg_get_serial_sequence('inventario_postobon.supply_order', 'order_
 SELECT setval(pg_get_serial_sequence('inventario_postobon.order_detail', 'detail_id'), (SELECT MAX(detail_id) FROM order_detail));
 SELECT setval(pg_get_serial_sequence('inventario_postobon.batch', 'batch_id'), (SELECT MAX(batch_id) FROM batch));
 SELECT setval(pg_get_serial_sequence('inventario_postobon.batch_detail', 'batch_detail_id'), (SELECT MAX(batch_detail_id) FROM batch_detail));
+
+-- Limpieza de las tablas puente
+DROP TABLE map_category;
+DROP TABLE map_supplier;
+DROP TABLE map_employee;
 
 COMMIT;
