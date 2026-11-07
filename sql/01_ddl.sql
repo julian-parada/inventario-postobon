@@ -1,21 +1,4 @@
--- =====================================================================
---  PROYECTO: GESTIÓN DE INVENTARIO - CENTRO DE DISTRIBUCIÓN POSTOBÓN OCAÑA
---  ARCHIVO 01: DDL (esquema, tablas, llaves, restricciones e índices)
---  Motor: PostgreSQL 13+ (probado en 16) - pgAdmin 4
---  Asignatura: Bases de Datos - Docente Byron Cuesta Quintero
--- =====================================================================
---  Reglas de diseño aplicadas:
---   * Todas las llaves foráneas usan ON DELETE RESTRICT / ON UPDATE RESTRICT
---     (NO hay eliminación en cascada en ninguna tabla).
---   * Las llaves primarias son INTEGER GENERATED ALWAYS AS IDENTITY:
---     el motor asigna el ID y no permite inventarlo ni modificarlo.
---   * Cada columna tiene NOT NULL y CHECK según su dominio.
---   * Tipos Oracle del modelo (VARCHAR2, NUMBER, TIMESTAMP WITH LOCAL
---     TIME ZONE) convertidos a sus equivalentes PostgreSQL.
--- =====================================================================
 
--- Para crear la base (ejecutar aparte, conectado a la BD "postgres"):
--- CREATE DATABASE postobon ENCODING 'UTF8';
 
 CREATE SCHEMA inventario_postobon;
 SET search_path TO inventario_postobon;
