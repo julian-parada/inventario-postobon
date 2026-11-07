@@ -43,13 +43,16 @@ app.use(express.json());
 // Acceso protegido (opcional): si APP_USUARIO y APP_CLAVE están definidos, el
 // navegador pide usuario y contraseña antes de mostrar la página. Se usa al
 // publicar la página en internet para que solo entre quien tenga la clave.
-if (process.env.APP_USUARIO && process.env.APP_CLAVE) {
+// .trim(): el panel de Render es un cuadro de texto y es fácil dejar un espacio o un Enter al final.
+const APP_USUARIO = (process.env.APP_USUARIO || '').trim();
+const APP_CLAVE = (process.env.APP_CLAVE || '').trim();
+if (APP_USUARIO && APP_CLAVE) {
   app.use((req, res, next) => {
     const [tipo, valor] = (req.headers.authorization || '').split(' ');
     if (tipo === 'Basic' && valor) {
       const texto = Buffer.from(valor, 'base64').toString();
       const i = texto.indexOf(':');
-      if (texto.slice(0, i) === process.env.APP_USUARIO && texto.slice(i + 1) === process.env.APP_CLAVE) return next();
+      if (texto.slice(0, i).trim().toLowerCase() === APP_USUARIO.toLowerCase() && texto.slice(i + 1).trim() === APP_CLAVE) return next();
     }
     res.set('WWW-Authenticate', 'Basic realm="Inventario Postobon", charset="UTF-8"').status(401).send('Acceso restringido');
   });
