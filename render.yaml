@@ -1,0 +1,21 @@
+# Despliegue en Render (https://render.com) con "New > Blueprint".
+# Los valores secretos (sync: false) se escriben en el panel de Render, no aquí.
+services:
+  - type: web
+    name: inventario-postobon
+    runtime: node
+    plan: free
+    rootDir: app
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: DB_SSL
+        value: "true"
+      - key: DB_SCHEMA
+        value: inventario_postobon
+      - key: APP_USUARIO
+        sync: false
+      - key: APP_CLAVE
+        sync: false

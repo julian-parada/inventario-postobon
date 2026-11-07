@@ -5,7 +5,7 @@
 const $ = sel => document.querySelector(sel);
 const estado = { config: null, tabla: 'inicio', pagina: 1, buscar: '', filtros: {}, editando: null, conteos: {} };
 const ESTADOS = ['PENDIENTE', 'APROBADA', 'RECIBIDA', 'CANCELADA'];
-const COLORES_ESTADO = { PENDIENTE: '#d97706', APROBADA: '#2563eb', RECIBIDA: '#16a34a', CANCELADA: '#94a3b8' };
+const COLORES_ESTADO = { PENDIENTE: '#f28c00', APROBADA: '#1556c4', RECIBIDA: '#1f9d55', CANCELADA: '#94a3b8' };
 const MENU = [
   ['General', [['inicio', 'Inicio']]],
   ['Catálogos', [['category', 'Categorías'], ['product', 'Productos'], ['supplier', 'Proveedores'], ['employee', 'Empleados']]],
@@ -84,6 +84,28 @@ function ir(tabla, filtros = {}) {
 }
 
 // ---------------------------------------------------------------- inicio
+const SABORES = ['#e3001b', '#f28c00', '#ffc20e', '#1f9d55', '#1556c4', '#7b3fc4'];
+
+// Botella genérica dibujada en SVG (decoración, no es un logo)
+const botella = (color, alto) => `<svg width="${Math.round(alto * .38)}" height="${alto}" viewBox="0 0 40 110" aria-hidden="true">
+  <path d="M15 2h10v14c0 6 9 10 9 22v64a6 6 0 0 1-6 6H12a6 6 0 0 1-6-6V38c0-12 9-16 9-22z" fill="${color}" stroke="rgba(255,255,255,.75)" stroke-width="2"/>
+  <rect x="6" y="54" width="28" height="24" fill="rgba(255,255,255,.88)"/><rect x="13" y="0" width="14" height="6" rx="2" fill="#fff"/>
+  <path d="M11 40c0-8 5-12 6-18" stroke="rgba(255,255,255,.45)" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`;
+
+function portadaInicio(conteos) {
+  const burbujas = [[62, 8, 30], [70, 58, 58], [88, 12, 26], [96, 70, 18], [56, 74, 16], [80, 34, 14]]
+    .map(([x, y, s], i) => `<i class="burbuja" style="left:${x}%;top:${y}%;width:${s}px;height:${s}px;animation-delay:-${i * 1.3}s"></i>`).join('');
+  const lotes = entero(conteos.batch || 0), ordenes = entero(conteos.supply_order || 0);
+  return `<section class="hero">${burbujas}
+    <div class="texto">
+      <span class="chip-hero">Datos en vivo · PostgreSQL</span>
+      <h2>Centro de distribución <span>Ocaña</span></h2>
+      <p>Control de inventario de bebidas: ${ordenes} órdenes de compra y ${lotes} lotes recibidos, validados por la base de datos.</p>
+    </div>
+    <div class="botellas">${[['#e3001b', 86], ['#f28c00', 104], ['#7b3fc4', 76], ['#1f9d55', 96], ['#ffc20e', 82]].map(([c, a]) => botella(c, a)).join('')}</div>
+  </section>`;
+}
+
 async function pintarInicio() {
   $('#tituloVista').textContent = 'Inicio';
   $('#subtituloVista').textContent = 'Resumen del inventario en PostgreSQL';
@@ -94,9 +116,10 @@ async function pintarInicio() {
     const maxEstado = Math.max(1, ...r.estados.map(e => +e.ordenes));
     const porEstado = Object.fromEntries(r.estados.map(e => [e.status, e]));
     $('#vista').innerHTML = `
+      ${portadaInicio(r.conteos)}
       <div class="kpis">
-        ${Object.entries(r.conteos).map(([t, n]) =>
-          `<div class="kpi" data-ir="${t}"><span>${NOMBRES_TABLA[t]}</span><strong>${entero(n)}</strong></div>`).join('')}
+        ${Object.entries(r.conteos).map(([t, n], i) =>
+          `<div class="kpi" data-ir="${t}" style="--color:${SABORES[i % SABORES.length]}"><span>${NOMBRES_TABLA[t]}</span><strong>${entero(n)}</strong></div>`).join('')}
       </div>
       <div class="rejilla">
         <div class="tarjeta">

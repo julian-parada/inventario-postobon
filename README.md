@@ -79,7 +79,19 @@ Todas las consultas usan parámetros (`$1`, `$2`…), lo que impide la inyecció
 
 ![Panel de inicio](docs/diagramas/app_inicio.png)
 
-## 3. Diagramas
+## 3. Publicar la página en internet (opcional)
+
+La aplicación se puede publicar gratis en [Render](https://render.com) usando la base de Supabase:
+
+1. En Render: **New → Blueprint** y elegir este repositorio (usa `render.yaml`).
+2. Llenar las variables que pide:
+   - `DATABASE_URL`: la cadena *Session pooler* de Supabase, con la contraseña.
+   - `APP_USUARIO` y `APP_CLAVE`: usuario y clave para entrar a la página (sin ellos, cualquiera con el enlace podría modificar los datos).
+3. Al terminar, Render entrega una dirección `https://inventario-postobon-xxxx.onrender.com`.
+
+En el plan gratuito el servicio se duerme tras 15 minutos sin visitas; la primera carga después tarda cerca de un minuto.
+
+## 4. Diagramas
 
 | Modelo conceptual | Modelo físico |
 | --- | --- |

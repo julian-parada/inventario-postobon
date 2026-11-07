@@ -1,20 +1,33 @@
+/* ---------- Fuentes (incluidas en /fonts, licencia OFL) ---------- */
+@font-face { font-family: 'Baloo 2'; font-weight: 700; font-display: swap; src: url(fonts/baloo-2-latin-700-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Baloo 2'; font-weight: 800; font-display: swap; src: url(fonts/baloo-2-latin-800-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Nunito Sans'; font-weight: 400; font-display: swap; src: url(fonts/nunito-sans-latin-400-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Nunito Sans'; font-weight: 600; font-display: swap; src: url(fonts/nunito-sans-latin-600-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Nunito Sans'; font-weight: 700; font-display: swap; src: url(fonts/nunito-sans-latin-700-normal.woff2) format('woff2'); }
+@font-face { font-family: 'Nunito Sans'; font-weight: 800; font-display: swap; src: url(fonts/nunito-sans-latin-800-normal.woff2) format('woff2'); }
+
 :root {
-  --fondo: #f4f5f7;
+  --fondo: #f2f6fc;
   --panel: #ffffff;
-  --borde: #e3e6eb;
-  --texto: #1d2330;
-  --suave: #687284;
-  --lateral: #14213d;
-  --lateral-texto: #c9d2e3;
-  --acento: #d62839;
-  --acento-oscuro: #b01f2e;
-  --azul: #2563eb;
+  --borde: #dfe6f1;
+  --texto: #14213d;
+  --suave: #5f6c85;
+  --azul: #0a3a8c;
+  --azul-claro: #1556c4;
+  --lateral: #0a3a8c;
+  --lateral-texto: #d3e0f7;
+  --acento: #e3001b;
+  --acento-oscuro: #b80016;
+  --amarillo: #ffc20e;
+  --naranja: #f28c00;
+  --morado: #7b3fc4;
   --verde: #15803d;
   --ambar: #b45309;
   --gris: #64748b;
-  --radio: 10px;
-  --sombra: 0 1px 2px rgba(16, 24, 40, .06), 0 1px 3px rgba(16, 24, 40, .08);
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --sabores: linear-gradient(90deg, #e3001b 0 16.6%, #f28c00 0 33.3%, #ffc20e 0 50%, #1f9d55 0 66.6%, #1556c4 0 83.3%, #7b3fc4 0);
+  --radio: 14px;
+  --sombra: 0 1px 2px rgba(10, 58, 140, .06), 0 4px 14px rgba(10, 58, 140, .07);
+  font-family: 'Nunito Sans', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   color: var(--texto);
 }
 * { box-sizing: border-box; }
@@ -178,4 +191,94 @@ select.cambio-estado { border: 1px solid var(--borde); border-radius: 8px; paddi
   .vista { padding: 16px; }
   .herramientas input[type=search] { min-width: 0; max-width: none; width: 100%; }
   .rejilla { grid-template-columns: 1fr; }
+}
+
+
+/* =====================================================================
+   TEMA POSTOBÓN: azul de marca, rojo, sabores y burbujas
+   ===================================================================== */
+h1, h2, h3, .marca strong, .kpi strong { font-family: 'Baloo 2', 'Nunito Sans', sans-serif; letter-spacing: -.01em; }
+.lateral {
+  background:
+    radial-gradient(circle at 85% 92%, rgba(255,255,255,.10) 0 38px, transparent 39px),
+    radial-gradient(circle at 12% 78%, rgba(255,255,255,.07) 0 22px, transparent 23px),
+    radial-gradient(circle at 70% 60%, rgba(255,255,255,.06) 0 12px, transparent 13px),
+    radial-gradient(circle at 30% 96%, rgba(255,255,255,.08) 0 14px, transparent 15px),
+    linear-gradient(175deg, #1556c4 0%, #0a3a8c 55%, #072a66 100%);
+}
+.lateral::before { content: ''; display: block; height: 6px; background: var(--sabores); flex-shrink: 0; }
+.marca { padding: 20px 20px 18px; }
+.marca strong { font-size: 21px; line-height: 1; }
+.marca span { font-weight: 600; }
+.marca-icono {
+  width: 44px; height: 44px; border-radius: 50%; background: var(--acento);
+  box-shadow: 0 0 0 3px rgba(255,255,255,.9), 0 6px 14px rgba(0,0,0,.25);
+}
+.marca-icono svg { width: 24px; height: 24px; fill: #fff; stroke: #fff; stroke-width: 1.2; }
+.grupo-menu { color: var(--amarillo); opacity: .85; font-weight: 800; }
+nav a { font-weight: 600; border-left: 4px solid transparent; }
+nav a:hover { background: rgba(255,255,255,.10); }
+nav a.activo { background: #fff; color: var(--azul); border-left-color: var(--acento); box-shadow: 0 4px 12px rgba(0,0,0,.18); }
+nav a.activo .cuenta { opacity: .8; }
+.conexion { font-weight: 600; }
+.etiqueta-academica { margin: 0 20px 14px; font-size: 11px; line-height: 1.35; opacity: .75; }
+
+.barra { border-bottom: 0; box-shadow: 0 1px 0 var(--borde); }
+.barra::after { content: ''; position: absolute; left: 0; right: 0; bottom: -4px; height: 4px; background: var(--sabores); opacity: .9; }
+.barra { position: sticky; }
+.barra h1 { font-size: 26px; line-height: 1.1; color: var(--azul); }
+
+.boton { border-radius: 99px; font-weight: 700; }
+.boton.primario { box-shadow: 0 4px 12px rgba(227,0,27,.28); }
+.boton.fantasma:hover { border-color: #b9c8e2; }
+.contador { background: var(--acento); }
+
+/* Portada del inicio */
+.hero {
+  position: relative; overflow: hidden; border-radius: 20px; color: #fff; padding: 30px 32px; margin-bottom: 22px;
+  background:
+    radial-gradient(circle at 88% 0%, rgba(255,255,255,.18), transparent 40%),
+    linear-gradient(125deg, #1556c4 0%, #0a3a8c 60%, #072a66 100%);
+  box-shadow: 0 14px 34px rgba(10,58,140,.28);
+  min-height: 210px;
+}
+.hero::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 8px; background: var(--sabores); }
+.hero .texto { position: relative; z-index: 2; max-width: 560px; }
+.hero .chip-hero {
+  display: inline-block; background: var(--acento); font-size: 11px; font-weight: 800; letter-spacing: .08em;
+  text-transform: uppercase; padding: 5px 12px; border-radius: 99px;
+}
+.hero h2 { font-size: 40px; line-height: 1; margin: 14px 0 6px; }
+.hero h2 span { color: var(--amarillo); }
+.hero p { margin: 0; font-size: 15px; opacity: .9; max-width: 480px; }
+.hero .burbuja {
+  position: absolute; border-radius: 50%; border: 2px solid rgba(255,255,255,.35);
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.45), rgba(255,255,255,.04) 62%);
+  animation: subir 9s ease-in-out infinite;
+}
+@keyframes subir { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+.hero .botellas { position: absolute; right: 34px; bottom: 8px; display: flex; gap: 10px; align-items: flex-end; z-index: 1; }
+.hero .botellas svg { filter: drop-shadow(0 8px 10px rgba(0,0,0,.25)); }
+@media (prefers-reduced-motion: reduce) { .hero .burbuja { animation: none; } }
+
+.kpi { position: relative; overflow: hidden; border: 0; padding: 18px 16px 16px; transition: transform .15s, box-shadow .15s; }
+.kpi::before { content: ''; position: absolute; left: 0; top: 0; right: 0; height: 5px; background: var(--color, var(--azul-claro)); }
+.kpi:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(10,58,140,.14); }
+.kpi span { font-weight: 700; }
+.kpi strong { font-size: 32px; color: var(--azul); line-height: 1.05; }
+.tarjeta { border: 0; }
+.tarjeta h3 { font-size: 19px; color: var(--azul); }
+th { background: #eef3fb; color: var(--azul); }
+.campos input:focus, .campos select:focus, .campos textarea:focus { outline: 3px solid #ffd0d6; }
+.herramientas input[type=search], .herramientas select { border-radius: 99px; }
+
+.rejilla > .tarjeta:first-child { grid-column: span 2; }
+.barras .fila-barra { grid-template-columns: 110px 1fr 200px; }
+.lista-simple li > span:last-child { white-space: nowrap; color: var(--suave); }
+@media (max-width: 1100px) { .rejilla > .tarjeta:first-child { grid-column: auto; } .barras .fila-barra { grid-template-columns: 100px 1fr; } .barras .valor { grid-column: 2; text-align: left; } }
+@media (max-width: 860px) {
+  .hero { padding: 24px 20px 120px; }
+  .hero .burbuja:nth-of-type(n+4) { display: none; }
+  .hero h2 { font-size: 30px; }
+  .hero .botellas { right: 16px; transform: scale(.7); transform-origin: bottom right; }
 }
