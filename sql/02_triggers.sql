@@ -30,7 +30,8 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = inventario_postobon, pg_temp;
 
 CREATE TRIGGER trg_category_normalizar BEFORE INSERT OR UPDATE ON category
     FOR EACH ROW EXECUTE FUNCTION fn_normalizar_texto();
@@ -113,7 +114,8 @@ BEGIN
 
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = inventario_postobon, pg_temp;
 
 CREATE TRIGGER trg_supply_order_reglas
     BEFORE INSERT OR UPDATE ON supply_order
@@ -150,7 +152,8 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = inventario_postobon, pg_temp;
 
 CREATE TRIGGER trg_order_detail_reglas
     BEFORE INSERT OR UPDATE OR DELETE ON order_detail
@@ -168,7 +171,8 @@ BEGIN
      WHERE order_id = CASE WHEN TG_OP = 'DELETE' THEN OLD.order_id ELSE NEW.order_id END;
     RETURN NULL;                           -- AFTER: el retorno se ignora
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = inventario_postobon, pg_temp;
 
 CREATE TRIGGER trg_order_detail_total
     AFTER INSERT OR UPDATE OR DELETE ON order_detail
@@ -232,7 +236,8 @@ BEGIN
 
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = inventario_postobon, pg_temp;
 
 CREATE TRIGGER trg_batch_reglas
     BEFORE INSERT OR UPDATE OR DELETE ON batch
@@ -309,7 +314,8 @@ BEGIN
 
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = inventario_postobon, pg_temp;
 
 CREATE TRIGGER trg_batch_detail_reglas
     BEFORE INSERT OR UPDATE OR DELETE ON batch_detail
@@ -335,7 +341,8 @@ BEGIN
     END IF;
     RETURN NULL;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = inventario_postobon, pg_temp;
 
 CREATE TRIGGER trg_category_auditar AFTER INSERT OR DELETE ON category
     FOR EACH ROW EXECUTE FUNCTION fn_auditar('category_id');
@@ -377,7 +384,8 @@ BEGIN
     RAISE EXCEPTION 'AUDIT_LOG es de solo lectura: operación % rechazada', TG_OP
         USING ERRCODE = 'insufficient_privilege';
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = inventario_postobon, pg_temp;
 
 CREATE TRIGGER trg_audit_log_inalterable BEFORE UPDATE OR DELETE ON audit_log
     FOR EACH ROW EXECUTE FUNCTION fn_auditoria_inalterable();
@@ -395,7 +403,8 @@ BEGIN
     RAISE EXCEPTION 'TRUNCATE no está permitido sobre %: elimine filas con DELETE', TG_TABLE_NAME
         USING ERRCODE = 'insufficient_privilege';
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql
+SET search_path = inventario_postobon, pg_temp;
 
 CREATE TRIGGER trg_category_no_truncate     BEFORE TRUNCATE ON category     FOR EACH STATEMENT EXECUTE FUNCTION fn_bloquear_truncate();
 CREATE TRIGGER trg_product_no_truncate      BEFORE TRUNCATE ON product      FOR EACH STATEMENT EXECUTE FUNCTION fn_bloquear_truncate();
