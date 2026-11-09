@@ -23,7 +23,6 @@ Proyecto de la asignatura **Bases de datos relacionales** — Ingeniería de Sis
 - Todas las llaves foráneas con `ON DELETE RESTRICT`: **no hay borrado en cascada**.
 - Restricciones `CHECK`, `UNIQUE` e identificadores `GENERATED ALWAYS AS IDENTITY`.
 - 9 funciones y 29 triggers: ciclo de vida de las órdenes, total automático, control de lotes, auditoría inalterable y bloqueo de `TRUNCATE`.
-- Resiste 62 de 62 intentos de romperla (`sql/04_pruebas_ataque.sql`).
 
 ---
 
@@ -39,7 +38,6 @@ Ejecute los scripts **en este orden** en el Query Tool de pgAdmin (o en el SQL E
 | 4 | `sql/03_datos.sql` | 100 productos, 1.000 órdenes, 1.500 detalles, 500 lotes y 500 detalles de lote |
 | 5 | `sql/05_consultas.sql` | Vistas de reporte y consultas de verificación |
 | 6 | `sql/07_seguridad.sql` | Roles con permisos mínimos (`consulta_inventario`, `app_inventario`) |
-| 7 | `sql/04_pruebas_ataque.sql` | Pruebas: debe mostrar **62 BLOQUEADO y 5 OK** |
 | 8 | `sql/08_validacion_datos.sql` | Validación de los datos cargados |
 
 Alternativa a los pasos 3 y 4: `sql/03b_importar_csv.sql` importa los CSV de `datos/csv/` con `COPY`.
