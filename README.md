@@ -38,7 +38,7 @@ Ejecute los scripts **en este orden** en el Query Tool de pgAdmin (o en el SQL E
 | 4 | `sql/03_datos.sql` | 100 productos, 1.000 órdenes, 1.500 detalles, 500 lotes y 500 detalles de lote |
 | 5 | `sql/05_consultas.sql` | Vistas de reporte y consultas de verificación |
 | 6 | `sql/07_seguridad.sql` | Roles con permisos mínimos (`consulta_inventario`, `app_inventario`) |
-| 8 | `sql/08_validacion_datos.sql` | Validación de los datos cargados |
+| 7 | `sql/08_validacion_datos.sql` | Validación de los datos cargados |
 
 Alternativa a los pasos 3 y 4: `sql/03b_importar_csv.sql` importa los CSV de `datos/csv/` con `COPY`.
 
