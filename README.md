@@ -4,7 +4,7 @@ Base de datos relacional en **PostgreSQL** y aplicación web para el módulo de 
 
 Proyecto de la asignatura **Bases de datos relacionales** — Ingeniería de Sistemas, Universidad Francisco de Paula Santander Ocaña (UFPSO). Docente: Byron Cuesta Quintero.
 
-**Integrantes:** Dairo Julián Parada Reyes (0192288) · Kevin Esteiman Sánchez Torres (0192313) · Yiceth Yuliana Velásquez Gómez (0192312)
+**Integrantes:** Dairo Julián Parada Reyes (0192288) · Yiceth Yuliana Velásquez Gómez (0192312)
 
 ---
 
