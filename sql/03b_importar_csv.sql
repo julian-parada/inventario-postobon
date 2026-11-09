@@ -1,23 +1,4 @@
--- =====================================================================
---  ARCHIVO 03b: IMPORTACIÓN DE LOS DATOS DESDE CSV (COPY)  - Anexo 1, E7
---  Alternativa a 03a + 03: carga el Excel definitivo (E6) exportado a CSV.
---
---  ANTES DE EJECUTAR:
---   1. Copie la carpeta csv/ a  C:/Users/Public/postobon/csv/
---      (PostgreSQL lee el archivo desde el servidor; la carpeta Public
---       evita errores de permisos en Windows).
---   2. Si usa otra carpeta, reemplace la ruta en las 8 líneas COPY.
---   3. Ejecute primero 01_ddl.sql y 02_triggers.sql en una base vacía.
---
---  Por qué se usan tablas de paso (staging):
---   * Los ID son GENERATED ALWAYS: se insertan con OVERRIDING SYSTEM VALUE
---     para conservar las llaves del Excel.
---   * El trigger T2 exige que toda orden nazca PENDIENTE. Por eso las
---     órdenes se cargan PENDIENTES y luego se recorre su ciclo de vida real:
---     detalle -> APROBADA -> lotes -> RECIBIDA / CANCELADA.
---   * Los triggers quedan ACTIVOS: los datos importados pasan las mismas
---     validaciones que cualquier usuario.
--- =====================================================================
+
 SET search_path TO inventario_postobon;
 BEGIN;
 
