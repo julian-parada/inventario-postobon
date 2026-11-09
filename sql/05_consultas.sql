@@ -143,3 +143,17 @@ SELECT * FROM v_cumplimiento_proveedor ORDER BY porcentaje_cumplimiento LIMIT 10
 -- C12. Últimos movimientos de auditoría
 SELECT audit_id, table_name, operation, record_id, changed_at, db_user
   FROM audit_log ORDER BY audit_id DESC LIMIT 20;
+
+-- C13. Compras por proveedor: solo órdenes RECIBIDAS (RI-05)
+SELECT s.name AS proveedor, count(o.order_id) AS ordenes, sum(o.total) AS total_comprado
+  FROM supplier s JOIN supply_order o ON o.supplier_id = s.supplier_id
+ WHERE o.status = 'RECIBIDA'
+ GROUP BY s.name ORDER BY total_comprado DESC;
+
+-- C14. Proveedor y empleado de cada lote (RI-07)
+SELECT b.batch_id, b.expiration_date, e.name AS recibido_por, o.order_id, s.name AS proveedor
+  FROM batch b
+  JOIN employee e     ON e.employee_id = b.employee_id
+  JOIN supply_order o ON o.order_id = b.order_id
+  JOIN supplier s     ON s.supplier_id = o.supplier_id
+ ORDER BY b.batch_id;
