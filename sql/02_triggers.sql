@@ -8,7 +8,7 @@ SET search_path TO inventario_postobon;
 -- =====================================================================
 -- T1. NORMALIZACIÓN DE TEXTO (BEFORE INSERT OR UPDATE, por fila)
 --     Quita espacios sobrantes y unifica mayúsculas/minúsculas, para que
---     "  coca   cola " y "COCA COLA" no se guarden como dos datos distintos.
+--     "  postobon " y "POSTOBON" no se guarden como dos datos distintos.
 -- =====================================================================
 CREATE OR REPLACE FUNCTION fn_normalizar_texto()
 RETURNS trigger AS $$
