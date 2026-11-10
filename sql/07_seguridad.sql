@@ -1,6 +1,6 @@
 -- =====================================================================
 --  ARCHIVO 07: SEGURIDAD - ROLES Y PERMISOS (pruebas SEC-01 y SEC-02)
---  La página web y los usuarios de consulta NO deben usar el superusuario
+--  Los usuarios de registro y de consulta NO deben usar el superusuario
 --  postgres: con él se pueden desactivar triggers o borrar tablas.
 -- =====================================================================
 SET search_path TO inventario_postobon;
@@ -14,11 +14,11 @@ DO $$ BEGIN
 END $$;
 CREATE ROLE consulta_inventario LOGIN PASSWORD 'Consulta2026';
 GRANT USAGE ON SCHEMA inventario_postobon TO consulta_inventario;
-GRANT SELECT ON category, product, supplier, employee, supply_order,
-                order_detail, batch, batch_detail TO consulta_inventario;
+GRANT SELECT ON inventario_postobon.category, inventario_postobon.product, inventario_postobon.supplier, inventario_postobon.employee, 
+                inventario_postobon.supply_order, inventario_postobon.order_detail, inventario_postobon.batch, inventario_postobon.batch_detail TO consulta_inventario;
 -- audit_log NO se comparte: solo la ve el administrador.
 
--- Rol de la aplicación web: lee y escribe datos, pero no cambia la estructura
+-- Rol de registro (personal de bodega): lee y escribe datos, pero no cambia la estructura
 DO $$ BEGIN
   IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'app_inventario') THEN
     EXECUTE 'DROP OWNED BY app_inventario';     -- quita sus permisos anteriores
@@ -27,10 +27,10 @@ DO $$ BEGIN
 END $$;
 CREATE ROLE app_inventario LOGIN PASSWORD 'App2026*';
 GRANT USAGE ON SCHEMA inventario_postobon TO app_inventario;
-GRANT SELECT, INSERT, UPDATE, DELETE ON category, product, supplier, employee,
-      supply_order, order_detail, batch, batch_detail TO app_inventario;
-GRANT SELECT ON audit_log TO app_inventario;
-GRANT INSERT ON audit_log TO app_inventario;                 -- la usan los triggers
+GRANT SELECT, INSERT, UPDATE, DELETE ON inventario_postobon.category, inventario_postobon.product, inventario_postobon.supplier, inventario_postobon.employee, 
+      inventario_postobon.supply_order, inventario_postobon.order_detail, inventario_postobon.batch, inventario_postobon.batch_detail TO app_inventario;
+GRANT SELECT ON inventario_postobon.audit_log TO app_inventario;
+GRANT INSERT ON inventario_postobon.audit_log TO app_inventario;                 -- la usan los triggers
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA inventario_postobon TO app_inventario;
 
 -- Comprobación (conectarse como consulta_inventario):

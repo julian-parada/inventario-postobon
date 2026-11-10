@@ -16,26 +16,26 @@ BEGIN;
 -- Validación previa: si falta alguna tabla base, se detiene con un mensaje claro
 DO $$
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM category) THEN RAISE EXCEPTION 'Primero llene CATEGORY'; END IF;
-    IF NOT EXISTS (SELECT 1 FROM supplier) THEN RAISE EXCEPTION 'Primero llene SUPPLIER'; END IF;
-    IF NOT EXISTS (SELECT 1 FROM employee) THEN RAISE EXCEPTION 'Primero llene EMPLOYEE'; END IF;
+    IF NOT EXISTS (SELECT 1 FROM inventario_postobon.category) THEN RAISE EXCEPTION 'Primero llene CATEGORY'; END IF;
+    IF NOT EXISTS (SELECT 1 FROM inventario_postobon.supplier) THEN RAISE EXCEPTION 'Primero llene SUPPLIER'; END IF;
+    IF NOT EXISTS (SELECT 1 FROM inventario_postobon.employee) THEN RAISE EXCEPTION 'Primero llene EMPLOYEE'; END IF;
 END $$;
 
 -- Tablas puente: posición (1, 2, 3...) -> ID real.
 -- Son tablas normales (no TEMP) para que el script funcione igual en pgAdmin
 -- y en el SQL Editor de Supabase; se borran al final del script.
-DROP TABLE IF EXISTS map_category;
-CREATE TABLE map_category AS
-  SELECT row_number() OVER (ORDER BY category_id) AS pos, category_id AS id FROM category;
-DROP TABLE IF EXISTS map_supplier;
-CREATE TABLE map_supplier AS
-  SELECT row_number() OVER (ORDER BY supplier_id) AS pos, supplier_id AS id FROM supplier;
-DROP TABLE IF EXISTS map_employee;
-CREATE TABLE map_employee AS
-  SELECT row_number() OVER (ORDER BY employee_id) AS pos, employee_id AS id FROM employee;
+DROP TABLE IF EXISTS inventario_postobon.map_category;
+CREATE TABLE inventario_postobon.map_category AS
+  SELECT row_number() OVER (ORDER BY category_id) AS pos, category_id AS id FROM inventario_postobon.category;
+DROP TABLE IF EXISTS inventario_postobon.map_supplier;
+CREATE TABLE inventario_postobon.map_supplier AS
+  SELECT row_number() OVER (ORDER BY supplier_id) AS pos, supplier_id AS id FROM inventario_postobon.supplier;
+DROP TABLE IF EXISTS inventario_postobon.map_employee;
+CREATE TABLE inventario_postobon.map_employee AS
+  SELECT row_number() OVER (ORDER BY employee_id) AS pos, employee_id AS id FROM inventario_postobon.employee;
 
 -- PRODUCT (100 filas)
-INSERT INTO product (product_id, category_id, name, unit_of_measure, reference_price, min_stock, max_stock) OVERRIDING SYSTEM VALUE
+INSERT INTO inventario_postobon.product (product_id, category_id, name, unit_of_measure, reference_price, min_stock, max_stock) OVERRIDING SYSTEM VALUE
 SELECT v.product_id, m.id, v.name, v.unit_of_measure, v.reference_price, v.min_stock, v.max_stock FROM (VALUES
 (1, 3, '7UP REGULAR 3 L PET', 'UNIDAD', 9950.00::numeric, 200, 800),
 (2, 1, 'POPULAR NARANJA 500 ML PET X12', 'PACA', 14660.00::numeric, 200, 1600),
@@ -138,10 +138,10 @@ SELECT v.product_id, m.id, v.name, v.unit_of_measure, v.reference_price, v.min_s
 (99, 1, 'POSTOBÓN NARANJA 500 ML PET', 'UNIDAD', 1680.00::numeric, 240, 960),
 (100, 18, 'GATORADE MANDARINA LATA 355 ML SIXPACK', 'SIXPACK', 16130.00::numeric, 150, 1500)
 ) AS v (product_id, pos, name, unit_of_measure, reference_price, min_stock, max_stock)
-JOIN map_category m ON m.pos = ((v.pos - 1) % (SELECT count(*) FROM map_category)) + 1;
+JOIN inventario_postobon.map_category m ON m.pos = ((v.pos - 1) % (SELECT count(*) FROM inventario_postobon.map_category)) + 1;
 
 -- SUPPLY_ORDER (1000 filas) - todas nacen PENDIENTE (regla del trigger T2)
-INSERT INTO supply_order (order_id, supplier_id, issue_date) OVERRIDING SYSTEM VALUE
+INSERT INTO inventario_postobon.supply_order (order_id, supplier_id, issue_date) OVERRIDING SYSTEM VALUE
 SELECT v.order_id, m.id, v.issue_date FROM (VALUES
 (1, 13, '2023-01-04 00:06:21-05'::timestamptz),
 (2, 4, '2023-01-06 01:21:19-05'::timestamptz),
@@ -644,8 +644,8 @@ SELECT v.order_id, m.id, v.issue_date FROM (VALUES
 (499, 28, '2026-07-04 11:13:53-05'::timestamptz),
 (500, 41, '2026-07-04 14:17:15-05'::timestamptz)
 ) AS v (order_id, pos, issue_date)
-JOIN map_supplier m ON m.pos = ((v.pos - 1) % (SELECT count(*) FROM map_supplier)) + 1;
-INSERT INTO supply_order (order_id, supplier_id, issue_date) OVERRIDING SYSTEM VALUE
+JOIN inventario_postobon.map_supplier m ON m.pos = ((v.pos - 1) % (SELECT count(*) FROM inventario_postobon.map_supplier)) + 1;
+INSERT INTO inventario_postobon.supply_order (order_id, supplier_id, issue_date) OVERRIDING SYSTEM VALUE
 SELECT v.order_id, m.id, v.issue_date FROM (VALUES
 (501, 44, '2026-07-04 15:39:20-05'::timestamptz),
 (502, 36, '2026-07-05 09:44:53-05'::timestamptz),
@@ -1148,10 +1148,10 @@ SELECT v.order_id, m.id, v.issue_date FROM (VALUES
 (999, 15, '2026-10-24 10:19:03-05'::timestamptz),
 (1000, 45, '2026-10-24 13:49:57-05'::timestamptz)
 ) AS v (order_id, pos, issue_date)
-JOIN map_supplier m ON m.pos = ((v.pos - 1) % (SELECT count(*) FROM map_supplier)) + 1;
+JOIN inventario_postobon.map_supplier m ON m.pos = ((v.pos - 1) % (SELECT count(*) FROM inventario_postobon.map_supplier)) + 1;
 
 -- ORDER_DETAIL (1500 filas) - el trigger T4 calcula SUPPLY_ORDER.TOTAL
-INSERT INTO order_detail (detail_id, order_id, product_id, requested_quantity, unit_price) OVERRIDING SYSTEM VALUE VALUES
+INSERT INTO inventario_postobon.order_detail (detail_id, order_id, product_id, requested_quantity, unit_price) OVERRIDING SYSTEM VALUE VALUES
 (1, 1, 69, 160, 1470.24),
 (2, 1, 28, 20, 31060.53),
 (3, 2, 3, 200, 54087.66),
@@ -1652,7 +1652,7 @@ INSERT INTO order_detail (detail_id, order_id, product_id, requested_quantity, u
 (498, 347, 56, 72, 5141.07),
 (499, 348, 40, 72, 110242.80),
 (500, 348, 84, 200, 6465.76);
-INSERT INTO order_detail (detail_id, order_id, product_id, requested_quantity, unit_price) OVERRIDING SYSTEM VALUE VALUES
+INSERT INTO inventario_postobon.order_detail (detail_id, order_id, product_id, requested_quantity, unit_price) OVERRIDING SYSTEM VALUE VALUES
 (501, 349, 92, 12, 8806.72),
 (502, 350, 32, 25, 41530.17),
 (503, 350, 66, 30, 22787.94),
@@ -2153,7 +2153,7 @@ INSERT INTO order_detail (detail_id, order_id, product_id, requested_quantity, u
 (998, 684, 27, 72, 82202.25),
 (999, 685, 94, 200, 9678.24),
 (1000, 685, 81, 25, 31764.15);
-INSERT INTO order_detail (detail_id, order_id, product_id, requested_quantity, unit_price) OVERRIDING SYSTEM VALUE VALUES
+INSERT INTO inventario_postobon.order_detail (detail_id, order_id, product_id, requested_quantity, unit_price) OVERRIDING SYSTEM VALUE VALUES
 (1001, 686, 16, 480, 1243.53),
 (1002, 687, 54, 100, 61722.00),
 (1003, 687, 98, 72, 71451.10),
@@ -2656,11 +2656,11 @@ INSERT INTO order_detail (detail_id, order_id, product_id, requested_quantity, u
 (1500, 1000, 26, 250, 5323.80);
 
 -- Ciclo de vida: PENDIENTE -> APROBADA / PENDIENTE -> CANCELADA
-UPDATE supply_order SET status = 'APROBADA' WHERE order_id IN (1, 4, 5, 7, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 26, 29, 30, 32, 33, 34, 35, 36, 38, 39, 40, 41, 42, 44, 46, 48, 51, 52, 53, 54, 55, 56, 57, 58, 60, 61, 62, 63, 64, 65, 66, 68, 70, 71, 72, 73, 74, 76, 78, 79, 80, 82, 83, 84, 85, 88, 89, 90, 91, 92, 95, 98, 99, 100, 103, 105, 106, 107, 108, 109, 110, 112, 114, 116, 117, 118, 119, 121, 122, 124, 125, 126, 127, 128, 129, 131, 134, 135, 137, 139, 141, 143, 144, 145, 146, 147, 148, 149, 150, 151, 153, 154, 155, 156, 157, 158, 160, 162, 165, 166, 167, 168, 171, 172, 173, 174, 175, 176, 177, 179, 181, 182, 183, 184, 186, 187, 190, 193, 194, 196, 199, 200, 201, 202, 204, 205, 206, 209, 210, 211, 213, 217, 218, 219, 220, 223, 225, 226, 228, 229, 230, 232, 233, 234, 235, 237, 240, 241, 244, 245, 247, 249, 250, 251, 252, 253, 254, 256, 258, 260, 261, 264, 265, 266, 267, 268, 269, 271, 272, 273, 277, 278, 280, 282, 283, 284, 285, 288, 289, 290, 291, 292, 293, 295, 297, 298, 299, 300, 302, 303, 304, 305, 306, 307, 308, 309, 310, 312, 314, 316, 317, 318, 319, 320, 322, 323, 324, 325, 326, 327, 328, 329, 330, 332, 333, 338, 339, 342, 343, 344, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 358, 359, 360, 361, 362, 363, 366, 367, 368, 369, 370, 371, 374, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 430, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 444, 445, 448, 449, 450, 451, 452, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 465, 466, 467, 468, 469, 470, 471, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 515, 516, 517, 518, 519, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 584, 585, 586, 587, 588, 589, 590, 591, 592, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 652, 659, 661, 664, 667, 670, 671, 673, 674, 677, 686, 690, 701, 706, 709, 710, 711, 715, 716, 717, 719, 722, 723, 725, 726, 729, 730, 731, 733, 734, 737, 740, 748, 752, 753, 756, 772, 773, 775, 776, 779, 780, 785, 790, 797, 799, 800, 805, 816, 817, 822, 823, 824, 827, 830, 834, 836, 838, 855, 860, 864, 866, 868, 872, 873, 875, 879, 880, 881, 885, 887, 891, 893, 896, 897, 901, 910, 912, 918, 925, 929, 933, 936, 942, 945, 953, 965, 967, 973, 979, 982, 985, 995, 998);
-UPDATE supply_order SET status = 'CANCELADA' WHERE order_id IN (2, 3, 6, 8, 10, 11, 23, 24, 25, 27, 28, 31, 37, 43, 45, 47, 49, 50, 59, 67, 69, 75, 77, 81, 86, 87, 93, 94, 96, 97, 101, 102, 104, 111, 113, 115, 120, 123, 130, 132, 133, 136, 138, 140, 142, 152, 159, 161, 163, 164, 169, 170, 178, 180, 185, 188, 189, 191, 192, 195, 197, 198, 203, 207, 208, 212, 214, 215, 216, 221, 222, 224, 227, 231, 236, 238, 239, 242, 243, 246, 248, 255, 257, 259, 262, 263, 270, 274, 275, 276, 279, 281, 286, 287, 294, 296, 301, 311, 313, 315, 321, 331, 334, 335, 336, 337, 340, 341, 345, 346, 357, 364, 365, 372, 373, 375, 386, 387, 403, 429, 431, 443, 446, 447, 453, 464, 472, 484, 514, 520, 562, 583, 593, 623, 704, 707, 821, 850, 852, 884);
+UPDATE inventario_postobon.supply_order SET status = 'APROBADA' WHERE order_id IN (1, 4, 5, 7, 9, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 26, 29, 30, 32, 33, 34, 35, 36, 38, 39, 40, 41, 42, 44, 46, 48, 51, 52, 53, 54, 55, 56, 57, 58, 60, 61, 62, 63, 64, 65, 66, 68, 70, 71, 72, 73, 74, 76, 78, 79, 80, 82, 83, 84, 85, 88, 89, 90, 91, 92, 95, 98, 99, 100, 103, 105, 106, 107, 108, 109, 110, 112, 114, 116, 117, 118, 119, 121, 122, 124, 125, 126, 127, 128, 129, 131, 134, 135, 137, 139, 141, 143, 144, 145, 146, 147, 148, 149, 150, 151, 153, 154, 155, 156, 157, 158, 160, 162, 165, 166, 167, 168, 171, 172, 173, 174, 175, 176, 177, 179, 181, 182, 183, 184, 186, 187, 190, 193, 194, 196, 199, 200, 201, 202, 204, 205, 206, 209, 210, 211, 213, 217, 218, 219, 220, 223, 225, 226, 228, 229, 230, 232, 233, 234, 235, 237, 240, 241, 244, 245, 247, 249, 250, 251, 252, 253, 254, 256, 258, 260, 261, 264, 265, 266, 267, 268, 269, 271, 272, 273, 277, 278, 280, 282, 283, 284, 285, 288, 289, 290, 291, 292, 293, 295, 297, 298, 299, 300, 302, 303, 304, 305, 306, 307, 308, 309, 310, 312, 314, 316, 317, 318, 319, 320, 322, 323, 324, 325, 326, 327, 328, 329, 330, 332, 333, 338, 339, 342, 343, 344, 347, 348, 349, 350, 351, 352, 353, 354, 355, 356, 358, 359, 360, 361, 362, 363, 366, 367, 368, 369, 370, 371, 374, 376, 377, 378, 379, 380, 381, 382, 383, 384, 385, 388, 389, 390, 391, 392, 393, 394, 395, 396, 397, 398, 399, 400, 401, 402, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 430, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 444, 445, 448, 449, 450, 451, 452, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 465, 466, 467, 468, 469, 470, 471, 473, 474, 475, 476, 477, 478, 479, 480, 481, 482, 483, 485, 486, 487, 488, 489, 490, 491, 492, 493, 494, 495, 496, 497, 498, 499, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 511, 512, 513, 515, 516, 517, 518, 519, 521, 522, 523, 524, 525, 526, 527, 528, 529, 530, 531, 532, 533, 534, 535, 536, 537, 538, 539, 540, 541, 542, 543, 544, 545, 546, 547, 548, 549, 550, 551, 552, 553, 554, 555, 556, 557, 558, 559, 560, 561, 563, 564, 565, 566, 567, 568, 569, 570, 571, 572, 573, 574, 575, 576, 577, 578, 579, 580, 581, 582, 584, 585, 586, 587, 588, 589, 590, 591, 592, 594, 595, 596, 597, 598, 599, 600, 601, 602, 603, 604, 605, 606, 607, 608, 609, 610, 611, 612, 613, 614, 615, 616, 617, 618, 619, 620, 621, 622, 624, 625, 626, 627, 628, 629, 630, 631, 632, 633, 634, 635, 636, 637, 638, 639, 640, 641, 642, 643, 644, 645, 646, 647, 648, 649, 650, 652, 659, 661, 664, 667, 670, 671, 673, 674, 677, 686, 690, 701, 706, 709, 710, 711, 715, 716, 717, 719, 722, 723, 725, 726, 729, 730, 731, 733, 734, 737, 740, 748, 752, 753, 756, 772, 773, 775, 776, 779, 780, 785, 790, 797, 799, 800, 805, 816, 817, 822, 823, 824, 827, 830, 834, 836, 838, 855, 860, 864, 866, 868, 872, 873, 875, 879, 880, 881, 885, 887, 891, 893, 896, 897, 901, 910, 912, 918, 925, 929, 933, 936, 942, 945, 953, 965, 967, 973, 979, 982, 985, 995, 998);
+UPDATE inventario_postobon.supply_order SET status = 'CANCELADA' WHERE order_id IN (2, 3, 6, 8, 10, 11, 23, 24, 25, 27, 28, 31, 37, 43, 45, 47, 49, 50, 59, 67, 69, 75, 77, 81, 86, 87, 93, 94, 96, 97, 101, 102, 104, 111, 113, 115, 120, 123, 130, 132, 133, 136, 138, 140, 142, 152, 159, 161, 163, 164, 169, 170, 178, 180, 185, 188, 189, 191, 192, 195, 197, 198, 203, 207, 208, 212, 214, 215, 216, 221, 222, 224, 227, 231, 236, 238, 239, 242, 243, 246, 248, 255, 257, 259, 262, 263, 270, 274, 275, 276, 279, 281, 286, 287, 294, 296, 301, 311, 313, 315, 321, 331, 334, 335, 336, 337, 340, 341, 345, 346, 357, 364, 365, 372, 373, 375, 386, 387, 403, 429, 431, 443, 446, 447, 453, 464, 472, 484, 514, 520, 562, 583, 593, 623, 704, 707, 821, 850, 852, 884);
 
 -- BATCH (500 filas) - solo para órdenes APROBADAS (trigger T5)
-INSERT INTO batch (batch_id, order_id, employee_id, expiration_date, initial_quantity) OVERRIDING SYSTEM VALUE
+INSERT INTO inventario_postobon.batch (batch_id, order_id, employee_id, expiration_date, initial_quantity) OVERRIDING SYSTEM VALUE
 SELECT v.batch_id, v.order_id, m.id, v.expiration_date, v.initial_quantity FROM (VALUES
 (1, 4, 50, '2023-12-20'::date, 50),
 (2, 7, 7, '2023-05-14'::date, 127),
@@ -3163,10 +3163,10 @@ SELECT v.batch_id, v.order_id, m.id, v.expiration_date, v.initial_quantity FROM 
 (499, 965, 25, '2027-06-10'::date, 180),
 (500, 967, 28, '2027-04-01'::date, 240)
 ) AS v (batch_id, order_id, pos, expiration_date, initial_quantity)
-JOIN map_employee m ON m.pos = ((v.pos - 1) % (SELECT count(*) FROM map_employee)) + 1;
+JOIN inventario_postobon.map_employee m ON m.pos = ((v.pos - 1) % (SELECT count(*) FROM inventario_postobon.map_employee)) + 1;
 
 -- BATCH_DETAIL (500 filas) - validado contra lo pedido (trigger T6)
-INSERT INTO batch_detail (batch_detail_id, batch_id, product_id, quantity) OVERRIDING SYSTEM VALUE VALUES
+INSERT INTO inventario_postobon.batch_detail (batch_detail_id, batch_id, product_id, quantity) OVERRIDING SYSTEM VALUE VALUES
 (1, 1, 85, 50),
 (2, 2, 76, 127),
 (3, 3, 33, 41),
@@ -3669,20 +3669,20 @@ INSERT INTO batch_detail (batch_detail_id, batch_id, product_id, quantity) OVERR
 (500, 500, 8, 240);
 
 -- Ciclo de vida: APROBADA -> RECIBIDA / APROBADA -> CANCELADA
-UPDATE supply_order SET status = 'RECIBIDA' WHERE order_id IN (4, 7, 9, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 26, 29, 30, 32, 34, 35, 36, 39, 40, 41, 42, 44, 48, 51, 53, 54, 55, 56, 57, 58, 60, 61, 62, 63, 64, 65, 66, 70, 71, 76, 78, 79, 80, 82, 85, 88, 89, 91, 95, 98, 99, 100, 103, 105, 106, 107, 108, 109, 112, 114, 116, 117, 119, 124, 126, 127, 128, 129, 131, 134, 137, 139, 141, 143, 147, 148, 149, 150, 151, 153, 155, 156, 157, 158, 162, 165, 167, 171, 172, 173, 175, 176, 177, 179, 181, 182, 183, 184, 186, 187, 193, 194, 196, 199, 200, 201, 202, 204, 205, 206, 209, 210, 211, 213, 217, 218, 220, 223, 225, 226, 228, 229, 230, 232, 233, 237, 240, 241, 244, 245, 247, 249, 250, 252, 253, 254, 256, 258, 260, 261, 265, 266, 267, 268, 269, 271, 272, 273, 277, 280, 282, 283, 285, 288, 289, 290, 291, 293, 298, 299, 300, 302, 303, 304, 306, 307, 308, 309, 310, 312, 314, 316, 317, 318, 319, 320, 323, 324, 325, 326, 327, 328, 329, 330, 333, 339, 343, 344, 347, 349, 350, 351, 352, 353, 354, 355, 356, 358, 359, 360, 361, 362, 363, 366, 367, 368, 369, 370, 371, 377, 378, 379, 380, 381, 382, 383, 384, 385, 388, 389, 390, 391, 392, 393, 395, 396, 397, 398, 399, 400, 401, 402, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 430, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 444, 445, 448, 449, 450, 451, 452, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 465, 466, 467, 468, 469, 470, 471, 473, 474, 475, 476, 477, 478, 482, 489, 490, 491, 493, 496, 498, 499, 507, 509, 511, 516, 517, 519, 522, 523, 525, 529, 531, 550, 551, 555, 556, 560, 564, 571, 572, 575, 578, 579, 580, 585, 588, 599, 601, 603, 605, 615, 617, 626, 628, 629, 634, 635, 642, 650, 652, 659, 661, 664, 671, 677, 686, 690, 706, 726, 737, 740, 753, 756, 772, 776, 780, 817, 838, 866, 868, 880);
-UPDATE supply_order SET status = 'CANCELADA' WHERE order_id IN (1, 5, 13, 33, 38, 46, 52, 68, 72, 73, 74, 83, 84, 90, 92, 110, 118, 121, 122, 125, 135, 144, 145, 146, 154, 160, 166, 168, 174, 190, 219, 234, 235, 251, 264, 278, 284, 292, 295, 297, 305, 322, 332, 338, 342, 348, 374, 376, 394, 541);
+UPDATE inventario_postobon.supply_order SET status = 'RECIBIDA' WHERE order_id IN (4, 7, 9, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22, 26, 29, 30, 32, 34, 35, 36, 39, 40, 41, 42, 44, 48, 51, 53, 54, 55, 56, 57, 58, 60, 61, 62, 63, 64, 65, 66, 70, 71, 76, 78, 79, 80, 82, 85, 88, 89, 91, 95, 98, 99, 100, 103, 105, 106, 107, 108, 109, 112, 114, 116, 117, 119, 124, 126, 127, 128, 129, 131, 134, 137, 139, 141, 143, 147, 148, 149, 150, 151, 153, 155, 156, 157, 158, 162, 165, 167, 171, 172, 173, 175, 176, 177, 179, 181, 182, 183, 184, 186, 187, 193, 194, 196, 199, 200, 201, 202, 204, 205, 206, 209, 210, 211, 213, 217, 218, 220, 223, 225, 226, 228, 229, 230, 232, 233, 237, 240, 241, 244, 245, 247, 249, 250, 252, 253, 254, 256, 258, 260, 261, 265, 266, 267, 268, 269, 271, 272, 273, 277, 280, 282, 283, 285, 288, 289, 290, 291, 293, 298, 299, 300, 302, 303, 304, 306, 307, 308, 309, 310, 312, 314, 316, 317, 318, 319, 320, 323, 324, 325, 326, 327, 328, 329, 330, 333, 339, 343, 344, 347, 349, 350, 351, 352, 353, 354, 355, 356, 358, 359, 360, 361, 362, 363, 366, 367, 368, 369, 370, 371, 377, 378, 379, 380, 381, 382, 383, 384, 385, 388, 389, 390, 391, 392, 393, 395, 396, 397, 398, 399, 400, 401, 402, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 418, 419, 420, 421, 422, 423, 424, 425, 426, 427, 428, 430, 432, 433, 434, 435, 436, 437, 438, 439, 440, 441, 442, 444, 445, 448, 449, 450, 451, 452, 454, 455, 456, 457, 458, 459, 460, 461, 462, 463, 465, 466, 467, 468, 469, 470, 471, 473, 474, 475, 476, 477, 478, 482, 489, 490, 491, 493, 496, 498, 499, 507, 509, 511, 516, 517, 519, 522, 523, 525, 529, 531, 550, 551, 555, 556, 560, 564, 571, 572, 575, 578, 579, 580, 585, 588, 599, 601, 603, 605, 615, 617, 626, 628, 629, 634, 635, 642, 650, 652, 659, 661, 664, 671, 677, 686, 690, 706, 726, 737, 740, 753, 756, 772, 776, 780, 817, 838, 866, 868, 880);
+UPDATE inventario_postobon.supply_order SET status = 'CANCELADA' WHERE order_id IN (1, 5, 13, 33, 38, 46, 52, 68, 72, 73, 74, 83, 84, 90, 92, 110, 118, 121, 122, 125, 135, 144, 145, 146, 154, 160, 166, 168, 174, 190, 219, 234, 235, 251, 264, 278, 284, 292, 295, 297, 305, 322, 332, 338, 342, 348, 374, 376, 394, 541);
 
 -- Se insertaron IDs explícitos (OVERRIDING SYSTEM VALUE); se ajustan las
 -- secuencias para que el próximo INSERT siga desde el último ID.
-SELECT setval(pg_get_serial_sequence('inventario_postobon.product', 'product_id'), (SELECT MAX(product_id) FROM product));
-SELECT setval(pg_get_serial_sequence('inventario_postobon.supply_order', 'order_id'), (SELECT MAX(order_id) FROM supply_order));
-SELECT setval(pg_get_serial_sequence('inventario_postobon.order_detail', 'detail_id'), (SELECT MAX(detail_id) FROM order_detail));
-SELECT setval(pg_get_serial_sequence('inventario_postobon.batch', 'batch_id'), (SELECT MAX(batch_id) FROM batch));
-SELECT setval(pg_get_serial_sequence('inventario_postobon.batch_detail', 'batch_detail_id'), (SELECT MAX(batch_detail_id) FROM batch_detail));
+SELECT setval(pg_get_serial_sequence('inventario_postobon.product', 'product_id'), (SELECT MAX(product_id) FROM inventario_postobon.product));
+SELECT setval(pg_get_serial_sequence('inventario_postobon.supply_order', 'order_id'), (SELECT MAX(order_id) FROM inventario_postobon.supply_order));
+SELECT setval(pg_get_serial_sequence('inventario_postobon.order_detail', 'detail_id'), (SELECT MAX(detail_id) FROM inventario_postobon.order_detail));
+SELECT setval(pg_get_serial_sequence('inventario_postobon.batch', 'batch_id'), (SELECT MAX(batch_id) FROM inventario_postobon.batch));
+SELECT setval(pg_get_serial_sequence('inventario_postobon.batch_detail', 'batch_detail_id'), (SELECT MAX(batch_detail_id) FROM inventario_postobon.batch_detail));
 
 -- Limpieza de las tablas puente
-DROP TABLE map_category;
-DROP TABLE map_supplier;
-DROP TABLE map_employee;
+DROP TABLE inventario_postobon.map_category;
+DROP TABLE inventario_postobon.map_supplier;
+DROP TABLE inventario_postobon.map_employee;
 
 COMMIT;

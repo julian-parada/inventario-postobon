@@ -7,7 +7,7 @@
 SET search_path TO inventario_postobon;
 
 -- CATEGORY (en este orden: 03_datos.sql reparte los productos por posición)
-INSERT INTO category (category_name, description) VALUES
+INSERT INTO inventario_postobon.category (category_name, description) VALUES
 ('GASEOSAS DE SABORES', 'Bebidas carbonatadas de sabores a frutas: Postobón, Colombiana, Bretaña, Kola Román'),
 ('GASEOSAS COLA', 'Bebidas carbonatadas tipo cola: Pepsi, Pepsi Black, Freskola'),
 ('GASEOSAS LIMA LIMON', 'Bebidas carbonatadas lima-limón: 7Up, Bretaña'),
@@ -30,7 +30,7 @@ INSERT INTO category (category_name, description) VALUES
 ('PROMOCIONES', 'Empaques promocionales y combos de temporada');
 
 -- SUPPLIER (50 filas)
-INSERT INTO supplier (name, tax_id, address) VALUES
+INSERT INTO inventario_postobon.supplier (name, tax_id, address) VALUES
 ('INVERSIONES LA PLAYA S.A.S.', '846721674-7', 'KM 15 VÍA OCAÑA LA PLAYA'),
 ('INVERSIONES LA ESPERANZA & CIA S.A.S.', '825604412-7', 'KM 19 VÍA OCAÑA CONVENCIÓN'),
 ('INDUSTRIAS LA PLAYA Y CIA LTDA', '889707012-1', 'KM 12 VÍA OCAÑA CONVENCIÓN'),
@@ -83,7 +83,7 @@ INSERT INTO supplier (name, tax_id, address) VALUES
 ('REPRESENTACIONES PAMPLONA S.A.S.', '840977068-0', 'TV 26 # 58-93 MEDELLÍN');
 
 -- EMPLOYEE (50 filas)
-INSERT INTO employee (name, position, username) VALUES
+INSERT INTO inventario_postobon.employee (name, position, username) VALUES
 ('HERNÁN ANTONIO LEÓN ANGARITA', 'AUXILIAR DE BODEGA', 'haleona'),
 ('DAIRO ALBERTO ORTEGA ARÉVALO', 'AUXILIAR DE BODEGA', 'daortegaa'),
 ('FABIÁN ANDRÉS MARTÍNEZ REYES', 'AUXILIAR DE BODEGA', 'famartinezr'),
